@@ -9,13 +9,27 @@ let leftBtn = document.querySelector(".left-btn");
 let rightBtn = document.querySelector(".right-btn")
 ws.addEventListener('open', () => {
      
-trackpad.addEventListener("touchmove", (e) => {
-    e.preventDefault();
-    let dx = e.targetTouches[0].clientX;
-    let dy = e.targetTouches[0].clientY;
-    console.log(JSON.stringify({ move_type: "move", dx, dy }));
-    ws.send(JSON.stringify({ move_type: "move", dx, dy }));
-})
+let lastX = null;
+let lastY = null;
+
+element.addEventListener("touchstart", (e) => {
+    const touch = e.touches[0];
+    lastX = touch.clientX;
+    lastY = touch.clientY;
+});
+
+element.addEventListener("touchmove", (e) => {
+    const touch = e.touches[0];
+    const dx = touch.clientX - lastX;
+    const dy = touch.clientY - lastY;
+
+    ws.send(JSON.stringify({ dx, dy }));
+
+    // update reference point to THIS event, not the original touchstart
+    lastX = touch.clientX;
+    lastY = touch.clientY;
+});
+
 
 trackpad.addEventListener("click", (e) => {
     e.preventDefault();

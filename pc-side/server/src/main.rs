@@ -36,7 +36,7 @@ for stream in listener.incoming() {
                         move_type : None , dx: None , dy : None 
                     };                     
                     match websocket.read() {
-                        Ok(Message::Text(text))=>{ message = serde_json::from_str(&text).unwrap(); },
+                        Ok(Message::Text(text))=>{ println!("Received text: {}", text); message = serde_json::from_str(&text).unwrap(); },
                         Ok(Message::Binary(data)) => {},
                         Ok(Message::Close(_)) => { },
                         Ok(Message::Ping(_)) | Ok(Message::Pong(_)) => { },
@@ -45,8 +45,7 @@ for stream in listener.incoming() {
                             
                         }
                     };
-                    
-                    
+                   
                     match message.move_type{
                         Some(value) => {
                             println!("{value}" );
@@ -64,7 +63,7 @@ for stream in listener.incoming() {
                        
                             
                         None=>{
-
+                            
                         }
 
                         
