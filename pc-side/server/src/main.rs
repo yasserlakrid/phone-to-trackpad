@@ -26,7 +26,7 @@ for stream in listener.incoming() {
             // Handle the connection in a separate thread or async task
             std::thread::spawn(move || {
                 let mut enigo = Enigo::new(&Settings::default()).unwrap(); 
-
+                println!("Enigo initialized");
               let mut websocket =   match accept(stream) {
                     Ok(ws) =>{ println!("hanshaked") ; ws },
                     Err(_err) => {println!("handshake failed"); return ; }
@@ -63,6 +63,7 @@ for stream in listener.incoming() {
                        
                             
                         None=>{
+                                enigo.move_mouse(message.dx.unwrap() as i32 , message.dy.unwrap() as i32  , Coordinate::Rel).unwrap();
                             
                         }
 
