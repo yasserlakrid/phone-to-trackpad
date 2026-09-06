@@ -13,8 +13,8 @@ trackpad.addEventListener("touchmove", (e) => {
     e.preventDefault();
     let dx = e.targetTouches[0].clientX;
     let dy = e.targetTouches[0].clientY;
-    console.log(JSON.stringify({ type: "move", dx, dy }));
-    ws.send(JSON.stringify({ type: "move", dx, dy }));
+    console.log(JSON.stringify({ move_type: "move", dx, dy }));
+    ws.send(JSON.stringify({ move_type: "move", dx, dy }));
 })
 
 trackpad.addEventListener("click", (e) => {

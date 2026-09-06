@@ -7,8 +7,8 @@ use enigo::{Enigo, Mouse, Settings, Coordinate, Button, Direction::{Press, Relea
 #[derive(Deserialize , Debug)]
 struct MoveInput {
     move_type : Option<String> , 
-    dx : Option<i32> , 
-    dy : Option<i32> 
+    dx : Option<f32> , 
+    dy : Option<f32> 
 
 }
 fn print_type<T>(_: &T) {
@@ -51,7 +51,8 @@ for stream in listener.incoming() {
                         Some(value) => {
                             println!("{value}" );
                             if value == "move".to_string() {
-                                enigo.move_mouse(message.dx.unwrap() , message.dy.unwrap() , Coordinate::Abs).unwrap();
+                                println!("dx: {} , dy: {}", message.dx.unwrap() , message.dy.unwrap());
+                                enigo.move_mouse(message.dx.unwrap() as i32 , message.dy.unwrap() as i32  , Coordinate::Abs).unwrap();
                             }else if value == "left click".to_string() {
                                 enigo.button(Button::Left , Click).unwrap();
                             }else  {
