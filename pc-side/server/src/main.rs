@@ -49,6 +49,7 @@ for stream in listener.incoming() {
                     
                     match message.move_type{
                         Some(value) => {
+                            println!("{value}" );
                             if value == "move".to_string() {
                                 enigo.move_mouse(message.dx.unwrap() , message.dy.unwrap() , Coordinate::Abs).unwrap();
                             }else if value == "left click".to_string() {
