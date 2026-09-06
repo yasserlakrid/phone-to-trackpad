@@ -12,13 +12,13 @@ ws.addEventListener('open', () => {
 let lastX = null;
 let lastY = null;
 
-element.addEventListener("touchstart", (e) => {
+trackpad.addEventListener("touchstart", (e) => {
     const touch = e.touches[0];
     lastX = touch.clientX;
     lastY = touch.clientY;
 });
 
-element.addEventListener("touchmove", (e) => {
+trackpad.addEventListener("touchmove", (e) => {
     const touch = e.touches[0];
     const dx = touch.clientX - lastX;
     const dy = touch.clientY - lastY;
