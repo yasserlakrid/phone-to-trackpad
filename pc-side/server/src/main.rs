@@ -31,12 +31,14 @@ for stream in listener.incoming() {
                     Ok(ws) =>{ println!("hanshaked") ; ws },
                     Err(_err) => {println!("handshake failed"); return ; }
                  };
-                 loop {
+                 let mut pending_x  : f32 = 0.0 ; 
+                 let mut pending_y :f32 = 0.0 ; 
+                  loop {
                     let mut message =  MoveInput {
                         move_type : None , dx: None , dy : None 
                     };                     
                     match websocket.read() {
-                        Ok(Message::Text(text))=>{ println!("Received text: {}", text); message = serde_json::from_str(&text).unwrap(); },
+                        Ok(Message::Text(text))=>{message = serde_json::from_str(&text).unwrap(); },
                         Ok(Message::Binary(data)) => {},
                         Ok(Message::Close(_)) => { },
                         Ok(Message::Ping(_)) | Ok(Message::Pong(_)) => { },
@@ -48,11 +50,7 @@ for stream in listener.incoming() {
                    
                     match message.move_type{
                         Some(value) => {
-                            println!("{value}" );
-                            if value == "move".to_string() {
-                                println!("dx: {} , dy: {}", message.dx.unwrap() , message.dy.unwrap());
-                                enigo.move_mouse(message.dx.unwrap() as i32 , message.dy.unwrap() as i32  , Coordinate::Abs).unwrap();
-                            }else if value == "left click".to_string() {
+                            if value == "left click".to_string() {
                                 enigo.button(Button::Left , Click).unwrap();
                             }else  {
                                 enigo.button(Button::Right , Click).unwrap();
@@ -63,7 +61,19 @@ for stream in listener.incoming() {
                        
                             
                         None=>{
-                                enigo.move_mouse(message.dx.unwrap() as i32 , message.dy.unwrap() as i32  , Coordinate::Rel).unwrap();
+
+                                let mut dx = message.dx.unwrap();
+                                let mut dy = message.dy.unwrap();
+                                pending_x += dx;
+                                pending_y += dy;
+
+                                let move_x = (pending_x.trunc()*1.5) as i32;
+                                let move_y = (pending_y.trunc()*1.5) as i32;
+
+                                pending_x -= move_x as f32;
+                                pending_y -= move_y as f32;
+
+                                enigo.move_mouse(move_x, move_y, Coordinate::Rel);
                             
                         }
 

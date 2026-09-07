@@ -1,5 +1,6 @@
 
-const ws = new WebSocket("ws://10.189.188.145:7878");
+console.log("🔥 SCRIPT LOADED");
+const ws = new WebSocket("ws://10.107.94.145:7878");
 ws.onopen = ()=> console.log("Connected to server")
 ws.onclose   = ()=> console.log("Disconnected from server");
 ws.onerror = (e)=> console.log("Error: ", e);
@@ -11,6 +12,21 @@ ws.addEventListener('open', () => {
      
 let lastX = null;
 let lastY = null;
+let dx = 0;
+let dy = 0;
+let framePending = false;
+
+function flushMovement() {
+    framePending = false;
+
+    if (dx === 0 && dy === 0) {
+        return;
+    }
+
+    ws.send(JSON.stringify({ dx, dy }));
+    dx = 0;
+    dy = 0;
+}
 
 trackpad.addEventListener("touchstart", (e) => {
     const touch = e.touches[0];
@@ -19,17 +35,24 @@ trackpad.addEventListener("touchstart", (e) => {
 });
 
 trackpad.addEventListener("touchmove", (e) => {
+    e.preventDefault();
     const touch = e.touches[0];
-    const dx = touch.clientX - lastX;
-    const dy = touch.clientY - lastY;
+    const dxnow = touch.clientX - lastX;
+    const dynow = touch.clientY - lastY;
+    dx += dxnow;
+    dy += dynow;
 
-    ws.send(JSON.stringify({ dx, dy }));
+    if (!framePending) {
+        framePending = true;
+        requestAnimationFrame(flushMovement);
+    }
 
     // update reference point to THIS event, not the original touchstart
     lastX = touch.clientX;
     lastY = touch.clientY;
+   
 });
-
+ 
 
 trackpad.addEventListener("click", (e) => {
     e.preventDefault();
